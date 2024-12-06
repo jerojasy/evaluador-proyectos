@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Crear Nueva Idea</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <ul class="nav nav-tabs" id="categoryTabs" role="tablist">
+        {% for category in categories %}
+        <li class="nav-item">
+            <a class="nav-link {% if forloop.first %}active{% endif %}" id="tab-{{ category.id }}" data-bs-toggle="tab"
+                href="#category-{{ category.id }}" role="tab" aria-controls="category-{{ category.id }}">
+                {{ category.name }}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <div class="tab-content">
+        {% for category in categories %}
+        <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" id="category-{{ category.id }}"
+            role="tabpanel">
+            {% for question in category.questions.all %}
+            <div class="form-group">
+                <label>{{ question.text }}</label>
+                {% if question.type == 'text' %}
+                <input type="text" class="form-control" name="question_{{ question.id }}">
+                {% elif question.type == 'number' %}
+                <input type="number" class="form-control" name="question_{{ question.id }}">
+                {% elif question.type == 'dropdown' %}
+                <select class="form-control" name="question_{{ question.id }}">
+                    {% for option in question.options_list %}
+                    <option value="{{ option }}">{{ option }}</option>
+                    {% endfor %}
+                </select>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Guardar</button>
+</form>
+{% endblock %}

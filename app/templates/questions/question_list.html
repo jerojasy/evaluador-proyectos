@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Preguntas por Categoría</h2>
+<a href="{% url 'questions:create' %}" class="btn btn-primary mb-3">Crear Nueva Pregunta</a>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Texto</th>
+            <th>Tipo</th>
+            <th>Opciones</th>
+            <th>Orden</th>
+            <th>Categoría</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for category, questions in grouped_questions.items %}
+        {% for question in questions %}
+        <tr>
+            <td>{{ question.text }}</td>
+            <td>{{ question.get_type_display }}</td>
+            <td>{{ question.options|default:"-" }}</td>
+            <td>{{ question.order }}</td>
+            <td>{{ category.name }}</td>
+            <td>
+                <a href="{% url 'questions:update' question.pk %}" class="btn btn-warning btn-sm">Editar</a>
+                <a href="{% url 'questions:delete' question.pk %}" class="btn btn-danger btn-sm">Eliminar</a>
+            </td>
+        </tr>
+        {% endfor %}
+        {% empty %}
+        <tr>
+            <td colspan="6">No hay preguntas disponibles.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

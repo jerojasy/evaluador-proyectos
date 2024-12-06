@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Mis Ideas</h2>
+<a href="{% url 'ideas:create' %}" class="btn btn-success mb-3">Crear Nueva Idea</a>
+
+{% for idea in ideas %}
+<div class="card mb-3">
+    <div class="card-body">
+        <h5 class="card-title">{{ idea.title }}</h5>
+        <p class="card-text"><strong>Estado:</strong> {{ idea.get_status_display }}</p>
+
+        <!-- Ver detalles -->
+        <a href="{% url 'ideas:detail' idea.pk %}" class="btn btn-primary">Ver Detalles</a>
+
+        <!-- Acciones basadas en el estado y el rol del usuario -->
+        {% if user.role == 'ENTREPRENEUR' %}
+        {% if idea.status == 'rejected' %}
+        <a href="{% url 'ideas:edit' idea.pk %}" class="btn btn-warning">Reenviar</a>
+        {% elif idea.status == 'pending' %}
+        <a href="" class="btn btn-danger">Eliminar</a>
+        {% elif idea.status == 'incomplete' %}
+        <a href="{% url 'ideas:edit' idea.pk %}" class="btn btn-warning">Completar</a>
+        {% endif %}
+        {% elif is_admin_or_evaluator %}
+        {% if idea.status == 'pending' %}
+        <a href="{% url 'ideas:edit' idea.pk %}" class="btn btn-success">Evaluar</a>
+        {% elif idea.status == 'rejected' %}
+        <p>Rechazada: Solo el usuario puede modificar.</p>
+        {% elif idea.status == 'approved' %}
+        <p>Aprobada.</p>
+        {% endif %}
+        {% endif %}
+    </div>
+</div>
+{% empty %}
+<p>No tienes ideas registradas.</p>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,91 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Evaluador{% endblock %}</title>
+
+    <!-- CSS -->
+    <link href="{% static 'css/light.css' %}" rel="stylesheet">
+
+</head>
+
+<body data-theme="default" data-layout="fluid" data-sidebar-position="left" data-sidebar-behavior="sticky">
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <nav id="sidebar" class="sidebar">
+            <div class="sidebar-content js-simplebar">
+                <a class="sidebar-brand" href="#">
+                    <span class="align-middle">Evaluador</span>
+                </a>
+
+                <ul class="sidebar-nav">
+                    {% block sidebar %}
+                    <li class="sidebar-item">
+                        <a class="sidebar-link" href="/">
+                            <i class="align-middle" data-feather="home"></i> <span class="align-middle">Home</span>
+                        </a>
+                    </li>
+
+                    {% if user.role == 'ADMIN' %}
+                    <li class="sidebar-item">
+                        <a class="sidebar-link" href="/users/">
+                            <i class="align-middle" data-feather="users"></i> <span class="align-middle">Usuarios</span>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    <li class="sidebar-item">
+                        <a data-bs-target="#ideasMenu" data-bs-toggle="collapse" class="sidebar-link collapsed">
+                            <i class="align-middle" data-feather="file"></i> <span class="align-middle">Ideas</span>
+                        </a>
+                        <ul id="ideasMenu" class="sidebar-dropdown list-unstyled collapse">
+                            <li class="sidebar-item"><a class="sidebar-link" href="/ideas/">Registro de
+                                    Ideas</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="sidebar-item">
+                        <a data-bs-target="#reportsMenu" data-bs-toggle="collapse" class="sidebar-link collapsed">
+                            <i class="align-middle" data-feather="bar-chart-2"></i> <span
+                                class="align-middle">Reportes</span>
+                        </a>
+                        <ul id="reportsMenu" class="sidebar-dropdown list-unstyled collapse">
+                            {% if user.role in 'ADMIN,EVALUATOR' %}
+                            <li class="sidebar-item"><a class="sidebar-link" href="/reports/ideas/">Ideas
+                                    Registradas</a></li>
+                            {% endif %}
+                        </ul>
+                    </li>
+
+                    <li class="sidebar-item">
+                        <a data-bs-target="#formsMenu" data-bs-toggle="collapse" class="sidebar-link collapsed">
+                            <i class="align-middle" data-feather="edit-3"></i> <span
+                                class="align-middle">Formularios</span>
+                        </a>
+                        <ul id="formsMenu" class="sidebar-dropdown list-unstyled collapse">
+                            {% if user.role in 'ADMIN,EVALUATOR' %}
+                            <li class="sidebar-item"><a class="sidebar-link" href="/questions/">Preguntas</a></li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                    {% endblock %}
+
+                </ul>
+            </div>
+        </nav>
+        <div class="main">
+            <main class="content">
+                {% block content %}
+                {% endblock %}
+            </main>
+        </div>
+    </div>
+    <!-- JS -->
+    <script src="{% static 'js/app.js' %}"></script>
+</body>
+
+</html>

@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:15
+    container_name: evaluador_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: evaluador_user
+      POSTGRES_PASSWORD: evaluador_password
+      POSTGRES_DB: evaluador_db
+    ports:
+      - "5432:5432"
+
+  web:
+    build: .
+    container_name: evaluador_web
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./app:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    env_file:
+      - .env
+
+volumes:
+  postgres_data:
