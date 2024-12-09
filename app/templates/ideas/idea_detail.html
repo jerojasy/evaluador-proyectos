@@ -5,11 +5,88 @@
 <div class="card">
     <div class="card-body">
         <h5 class="card-title">{{ idea.title }}</h5>
-        <p><strong>Estado:</strong> {{ idea.get_status_display }}</p>
-        <p><strong>Creado por:</strong> {{ idea.user }}</p>
-        <p><strong>Fecha de creación:</strong> {{ idea.created_at|date:"d/m/Y H:i" }}</p>
-        <p><strong>Última modificación:</strong> {{ idea.updated_at|date:"d/m/Y H:i" }}</p>
+        <hr>
+        <p><strong>Estado</strong> <span class="align-middle badge 
+                            {% if idea.get_status_display == 'Aprobada' %}
+                                bg-success
+                            {% elif idea.get_status_display == 'Pendiente de evaluación' %}
+                                bg-info
+                            {% elif idea.get_status_display == 'Rechazada' %}
+                                bg-danger
+                            {% elif idea.get_status_display == 'Sin terminar' %}
+                                bg-secondary
+                            {% endif %}
+                        ">
+                {{ idea.get_status_display }}
+            </span></p>
+        <div class="d-flex flex-row bd-highlight">
+            <div class="bd-highlight">
+                <p><strong>Fecha de creación:</strong> {{ idea.created_at|date:"d/m/Y H:i" }}</p>
+            </div>
+            <div class="mx-5 bd-highlight">
+                <p><strong>Última modificación:</strong> {{ idea.updated_at|date:"d/m/Y H:i" }}</p>
+            </div>
+        </div>
+        <div>
+            <h5>Autor</h5>
+            <p>{{ idea.user }}</p>
+        </div>
+        <hr>
+        <div>
+            <h5>Observación</h5>
+            <p>{{ idea.observation|default:"Sin observaciones" }}</p>
+
+        </div>
+
     </div>
 </div>
+<h3 class="mt-4">Preguntas y Respuestas</h3>
+
+<div class="accordion" id="accordionExample">
+    {% for category in categories %}
+    <div class="card">
+        <div class="card-header" id="heading-{{ category.id }}">
+            <h5 class="card-title my-2">
+                <a href="#" data-bs-toggle="collapse" data-bs-target="#collapse-{{ category.id }}" aria-expanded="false"
+                    aria-controls="collapse-{{ category.id }}">
+                    {{ category.name }}
+                </a>
+            </h5>
+        </div>
+        <div id="collapse-{{ category.id }}" class="collapse {% if forloop.first %}show{% endif %}"
+            aria-labelledby="heading-{{ category.id }}" data-bs-parent="#accordionExample">
+            <div class="card-body">
+                <ol class="list-group list-group-numbered">
+                    {% for question in category.questions.all %}
+                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                        <div class="ms-2 me-auto">
+                            <div class="fw-bold">{{ question.text }}</div>
+                            <p>{{ question.answer }}</p>
+                        </div>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                        <div class="ms-2 me-auto">
+                            <div class="fw-bold">Sin preguntas</div>
+                            No hay preguntas en esta categoría.
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ol>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% if user.role == 'ADMIN' or user.role == 'EVALUATOR' %}
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" name="action" value="approved" class="btn btn-success">Aprobar</button>
+    <button type="submit" name="action" value="rejected" class="btn btn-danger">Rechazar</button>
+</form>
+{% endif %}
+
 <a href="{% url 'ideas:list' %}" class="btn btn-secondary mt-3">Volver al Listado</a>
 {% endblock %}

@@ -3,37 +3,70 @@
 {% block content %}
 <h2>Mis Ideas</h2>
 <a href="{% url 'ideas:create' %}" class="btn btn-success mb-3">Crear Nueva Idea</a>
+<table id="ideasTable" class="table table-striped">
+    <thead>
+        <tr>
+            <th>Título</th>
+            <th>Estado</th>
+            <th>Observación</th>
+            <th>Autor</th>
+            <th>Empresa</th>
+            <th>Última Modificación</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for idea in ideas %}
+        <tr>
+            <td>{{ idea.title }}</td>
+            <td>
+                <span class="badge 
+                    {% if idea.get_status_display == 'Aprobada' %}
+                        bg-success
+                    {% elif idea.get_status_display == 'Pendiente de evaluación' %}
+                        bg-info
+                    {% elif idea.get_status_display == 'Rechazada' %}
+                        bg-danger
+                    {% elif idea.get_status_display == 'Sin terminar' %}
+                        bg-secondary
+                    {% endif %}
+                ">
+                    {{ idea.get_status_display }}
+                </span>
+            </td>
+            <td>{{ idea.observation|default:"Sin observaciones" }}</td>
+            <td>{{ idea.user }}</td>
+            <td>{{ idea.user.empresa }}</td>
+            <td>{{ idea.updated_at|date:"d/m/Y H:i" }}</td>
+            <td>
+                <a href="{% url 'ideas:detail' idea.pk %}" class="btn btn-primary btn-sm">Detalles</a>
 
-{% for idea in ideas %}
-<div class="card mb-3">
-    <div class="card-body">
-        <h5 class="card-title">{{ idea.title }}</h5>
-        <p class="card-text"><strong>Estado:</strong> {{ idea.get_status_display }}</p>
+                {% if user.role == 'CLIENT' %}
+                {% if idea.status == 'rejected' %}
+                <a href="{% url 'ideas:edit' idea.pk %}" class="btn btn-warning btn-sm">Reenviar</a>
+                {% elif idea.status == 'pending' %}
+                <a href="{% url 'ideas:delete' idea.pk %}" class="btn btn-danger btn-sm">Eliminar</a>
+                {% elif idea.status == 'incomplete' %}
+                <a href="{% url 'ideas:edit' idea.pk %}" class="btn btn-warning btn-sm">Completar</a>
+                {% endif %}
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
-        <!-- Ver detalles -->
-        <a href="{% url 'ideas:detail' idea.pk %}" class="btn btn-primary">Ver Detalles</a>
+<script>
+    $(document).ready(function () {
+        $('#ideasTable').DataTable({
+            language: {
+                url: "https://cdn.datatables.net/plug-ins/2.1.8/i18n/es-CL.json"
+            },
+            pageLength: 10,
+            lengthMenu: [5, 10, 25, 50],
+            responsive: true
+        });
+    });
+</script>
 
-        <!-- Acciones basadas en el estado y el rol del usuario -->
-        {% if user.role == 'ENTREPRENEUR' %}
-        {% if idea.status == 'rejected' %}
-        <a href="{% url 'ideas:edit' idea.pk %}" class="btn btn-warning">Reenviar</a>
-        {% elif idea.status == 'pending' %}
-        <a href="" class="btn btn-danger">Eliminar</a>
-        {% elif idea.status == 'incomplete' %}
-        <a href="{% url 'ideas:edit' idea.pk %}" class="btn btn-warning">Completar</a>
-        {% endif %}
-        {% elif is_admin_or_evaluator %}
-        {% if idea.status == 'pending' %}
-        <a href="{% url 'ideas:edit' idea.pk %}" class="btn btn-success">Evaluar</a>
-        {% elif idea.status == 'rejected' %}
-        <p>Rechazada: Solo el usuario puede modificar.</p>
-        {% elif idea.status == 'approved' %}
-        <p>Aprobada.</p>
-        {% endif %}
-        {% endif %}
-    </div>
-</div>
-{% empty %}
-<p>No tienes ideas registradas.</p>
-{% endfor %}
 {% endblock %}

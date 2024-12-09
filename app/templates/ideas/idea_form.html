@@ -1,47 +1,64 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Crear Nueva Idea</h2>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-
-    <ul class="nav nav-tabs" id="categoryTabs" role="tablist">
-        {% for category in categories %}
-        <li class="nav-item">
-            <a class="nav-link {% if forloop.first %}active{% endif %}" id="tab-{{ category.id }}" data-bs-toggle="tab"
-                href="#category-{{ category.id }}" role="tab" aria-controls="category-{{ category.id }}">
-                {{ category.name }}
-            </a>
-        </li>
-        {% endfor %}
-    </ul>
-
-    <div class="tab-content">
-        {% for category in categories %}
-        <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" id="category-{{ category.id }}"
-            role="tabpanel">
-            {% for question in category.questions.all %}
-            <div class="form-group">
-                <label>{{ question.text }}</label>
-                {% if question.type == 'text' %}
-                <input type="text" class="form-control" name="question_{{ question.id }}">
-                {% elif question.type == 'number' %}
-                <input type="number" class="form-control" name="question_{{ question.id }}">
-                {% elif question.type == 'dropdown' %}
-                <select class="form-control" name="question_{{ question.id }}">
-                    {% for option in question.options_list %}
-                    <option value="{{ option }}">{{ option }}</option>
-                    {% endfor %}
-                </select>
-                {% endif %}
-            </div>
-            {% endfor %}
+<div class="card p-3">
+<h2 class="d-flex align-items-center">
+    <i class="align-middle text-black me-2" data-feather="check-circle"></i>
+    {% if idea %}Editar Idea{% else %}Crear Nueva Idea{% endif %}
+</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3 mx-2">
+            <label for="id_title" class="form-label">Título de idea</label>
+            <input type="text" id="id_title" name="title" class="form-control w-25" value="{{ form.title.value|default:'' }}">
         </div>
-        {% endfor %}
-    </div>
-
-    <button type="submit" class="btn btn-primary mt-3">Guardar</button>
-</form>
+        <div class="card-header">
+            <!-- Pestañas de categorías -->
+            <ul class="nav nav-pills card-header-pills pull-right" id="categoryTabs" role="tablist">
+                {% for category in categories %}
+                <li class="nav-item">
+                    <a class="nav-link {% if forloop.first %}active{% endif %}" id="tab-{{ category.id }}"
+                        data-bs-toggle="tab" href="#category-{{ category.id }}" role="tab"
+                        aria-controls="category-{{ category.id }}">
+                        {{ category.name }}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- Contenido de cada pestaña -->
+        <div class="card-body">
+            <div class="tab-content">
+                {% for category in categories %}
+                <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" id="category-{{ category.id }}"
+                    role="tabpanel">
+                    {% for question in category.questions.all %}
+                    <div class="form-group">
+                        <label class="form-label">{{ question.text }}</label>
+                        {% if question.type == 'text' %}
+                        <input type="text" class="form-control" name="question_{{ question.id }}"
+                            value="{{ question.current_answer|default:'' }}">
+                        {% elif question.type == 'number' %}
+                        <input type="number" class="form-control" name="question_{{ question.id }}"
+                            value="{{ question.current_answer|default:'' }}">
+                        {% elif question.type == 'dropdown' %}
+                        <select class="form-control" name="question_{{ question.id }}">
+                            <option value="">Seleccione una opción</option>
+                            {% for option in question.options_list %}
+                            <option value="{{ option }}" {% if option == question.current_answer %}selected{% endif %}>
+                                {{ option }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary m-3">{% if idea %}Actualizar{% else %}Guardar{% endif %}</button>
+    </form>
+</div>
 {% endblock %}
