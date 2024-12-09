@@ -27,6 +27,14 @@
                                     </div>
                                     <form method="post">
                                         {% csrf_token %}
+                                        <!-- Mostrar errores de autenticación -->
+                                        {% if form.non_field_errors %}
+                                        <div class="alert alert-danger">
+                                            {% for error in form.non_field_errors %}
+                                            <p>{{ error }}</p>
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}
                                         <div class="mb-3">
                                             <label for="id_username" class="form-label">Email</label>
                                             {{ form.username }}
@@ -41,6 +49,9 @@
                                     </form>
                                     <small>
                                         <!-- <a href="pages-reset-password.html">Olvido su contraseña?</a> -->
+                                    </small>
+                                    <small>
+                                        <a href="{% url 'register' %}">¿No tienes cuenta? Regístrate aquí</a>
                                     </small>
                                 </div>
                             </div>
