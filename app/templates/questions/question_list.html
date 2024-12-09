@@ -4,7 +4,7 @@
 <h2>Preguntas por Categoría</h2>
 <a href="{% url 'questions:create' %}" class="btn btn-primary mb-3">Crear Nueva Pregunta</a>
 
-<table class="table table-bordered">
+<table class="table table-striped" id="questionsTable">
     <thead>
         <tr>
             <th>Texto</th>
@@ -37,4 +37,21 @@
         {% endfor %}
     </tbody>
 </table>
+
+<!-- Script de DataTables -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const table = new DataTable('#questionsTable', {
+            language: {
+                url: "https://cdn.datatables.net/plug-ins/2.1.8/i18n/es-CL.json"
+            },
+            pageLength: 10,
+            lengthMenu: [5, 10, 25, 50],
+            responsive: true,
+            columnDefs: [
+                { orderable: false, targets: 5 } // Deshabilitar ordenación en la columna de acciones
+            ]
+        });
+    });
+</script>
 {% endblock %}

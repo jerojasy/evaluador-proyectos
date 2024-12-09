@@ -1,6 +1,7 @@
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from .models import Question, Category
+from .models import Question
+from .forms import QuestionForm
 
 class QuestionListView(ListView):
     model = Question
@@ -17,18 +18,26 @@ class QuestionListView(ListView):
             grouped_questions.setdefault(question.category, []).append(question)
         context['grouped_questions'] = grouped_questions
         return context
+    try:
+        from .forms import QuestionForm
+        print("Formulario importado correctamente")
+    except ImportError as e:
+        print(f"Error importando QuestionForm: {e}")
 
 
 class QuestionCreateView(CreateView):
     model = Question
-    fields = ['text', 'type', 'options', 'order', 'category']
+    # fields = ['text', 'type', 'options', 'order', 'category']
+    form_class = QuestionForm
     template_name = 'questions/question_form.html'
     success_url = reverse_lazy('questions:list')
 
 
+
 class QuestionUpdateView(UpdateView):
     model = Question
-    fields = ['text', 'type', 'options', 'order', 'category']
+    # fields = ['text', 'type', 'options', 'order', 'category']
+    form_class = QuestionForm
     template_name = 'questions/question_form.html'
     success_url = reverse_lazy('questions:list')
 

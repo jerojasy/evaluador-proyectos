@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>{% if object %}Editar Usuario{% else %}Crear Usuario{% endif %}</h2>
+
+<form method="post">
+    {% csrf_token %}
+        {% for field in form %}
+        <div class="mb-3">
+            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+            <div class="text-danger">
+                {{ field.errors|striptags }}
+            </div>
+            {% endif %}
+            {% if field.help_text %}
+            <small class="form-text text-muted">{{ field.help_text }}</small>
+            {% endif %}
+        </div>
+        {% endfor %}
+    <button type="submit" class="btn btn-primary">{% if object %}Actualizar{% else %}Guardar{% endif %}</button>
+    <a href="{% url 'user-list' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+
+{% endblock %}
