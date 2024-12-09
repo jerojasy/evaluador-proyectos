@@ -7,7 +7,8 @@ class CustomUser(AbstractUser):
         ('EVALUATOR', 'Evaluador'),
         ('CLIENT', 'Emprendedor'),
     ]
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='CLIENT')
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='CLIENT', verbose_name="Perfil")
+    empresa = models.CharField(max_length=255, null=True, blank=True, verbose_name="Empresa")
 
     def __str__(self):
         return f"{self.username} ({self.get_role_display()})"

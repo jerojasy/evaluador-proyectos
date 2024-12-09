@@ -18,19 +18,25 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
-from users.views import CustomLoginView, CustomLogoutView, RegisterView
+from users.views import CustomLoginView, CustomLogoutView, RegisterView, UserListView, UserCreateView, UserUpdateView, UserDeleteView
 from .views import home
 
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', home, name='home'),
+    # users
     path('login/', CustomLoginView.as_view(), name='login'),
     path('logout/', CustomLogoutView.as_view(), name='logout'),
+    path('users/', UserListView.as_view(), name='user-list'),
     path('register/', RegisterView.as_view(), name='register'),
-    path('users/', include('users.urls')),
-    path('', home, name='home'),
+    path('create/', UserCreateView.as_view(), name='user-create'),
+    path('<int:pk>/edit/', UserUpdateView.as_view(), name='user-edit'),
+    path('<int:pk>/delete/', UserDeleteView.as_view(), name='user-delete'),
+    # mantenedor preguntas
     path('questions/', include('questions.urls')),
+    # ideas
     path('ideas/', include('ideas.urls', namespace='ideas')),
 ]
 if settings.DEBUG:
