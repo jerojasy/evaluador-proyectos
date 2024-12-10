@@ -5,12 +5,12 @@
 <div class="card p-3">
 <h2 class="d-flex align-items-center">
     <i class="align-middle text-black me-2" data-feather="check-circle"></i>
-    {% if idea %}Editar Idea{% else %}Crear Nueva Idea{% endif %}
+    {% if idea %}Editar Idea{% else %}Crear Nuevo Proyecto{% endif %}
 </h2>
     <form method="post">
         {% csrf_token %}
         <div class="mb-3 mx-2">
-            <label for="id_title" class="form-label">Título de idea</label>
+            <label for="id_title" class="form-label">Título del Proyecto</label>
             <input type="text" id="id_title" name="title" class="form-control w-25" value="{{ form.title.value|default:'' }}">
         </div>
         <div class="card-header">
