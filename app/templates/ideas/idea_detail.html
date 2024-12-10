@@ -44,18 +44,17 @@
 
 <div class="accordion" id="accordionExample">
     {% for category in categories %}
-    <div class="card">
-        <div class="card-header" id="heading-{{ category.id }}">
-            <h5 class="card-title my-2">
-                <a href="#" data-bs-toggle="collapse" data-bs-target="#collapse-{{ category.id }}" aria-expanded="false"
-                    aria-controls="collapse-{{ category.id }}">
-                    {{ category.name }}
-                </a>
-            </h5>
-        </div>
-        <div id="collapse-{{ category.id }}" class="collapse {% if forloop.first %}show{% endif %}"
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="heading-{{ category.id }}">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapse-{{ category.id }}" aria-expanded="true"
+                aria-controls="collapse-{{ category.id }}">
+                {{ category.name }}
+            </button>
+        </h2>
+        <div id="collapse-{{ category.id }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}"
             aria-labelledby="heading-{{ category.id }}" data-bs-parent="#accordionExample">
-            <div class="card-body">
+            <div class="accordion-body">
                 <ol class="list-group list-group-numbered">
                     {% for question in category.questions.all %}
                     <li class="list-group-item d-flex justify-content-between align-items-start">
@@ -80,12 +79,14 @@
 </div>
 
 {% if user.role == 'ADMIN' or user.role == 'EVALUATOR' %}
+{% if idea.status == 'pending' %}
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit" name="action" value="approved" class="btn btn-success">Aprobar</button>
     <button type="submit" name="action" value="rejected" class="btn btn-danger">Rechazar</button>
 </form>
+{% endif %}
 {% endif %}
 
 <a href="{% url 'ideas:list' %}" class="btn btn-secondary mt-3">Volver al Listado</a>

@@ -7,6 +7,7 @@ from questions.models import Category, Question
 from django.views.generic.edit import FormView
 from django import forms
 from django.urls import reverse_lazy
+from django.db.models import Q
 
 class IdeaListView(ListView):
     model = Idea
@@ -16,7 +17,7 @@ class IdeaListView(ListView):
     def get_queryset(self):
         user = self.request.user
         if user.role in ['ADMIN', 'EVALUATOR']:
-            return Idea.objects.all()
+            return Idea.objects.filter(Q(user=user) | ~Q(status='incomplete'))
         elif user.role == 'CLIENT':
             return Idea.objects.filter(user=user)
         return Idea.objects.none()
