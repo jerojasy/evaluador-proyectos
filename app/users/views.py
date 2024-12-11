@@ -6,7 +6,7 @@ from django.urls import reverse_lazy
 from .forms import CustomUserCreationForm, CustomAuthenticationForm, AutoRegisterForm, CustomUserUpdateForm
 from .models import CustomUser
 
-class CustomLoginView(LoginRequiredMixin, LoginView):
+class CustomLoginView( LoginView):
     form_class = CustomAuthenticationForm
     template_name = 'users/login.html'
 
@@ -15,10 +15,10 @@ class CustomLoginView(LoginRequiredMixin, LoginView):
         print(form.non_field_errors())
         return super().form_invalid(form)
 
-class CustomLogoutView(LoginRequiredMixin, LogoutView):
+class CustomLogoutView( LogoutView):
     next_page = reverse_lazy('login')
 
-class RegisterView(LoginRequiredMixin, CreateView):
+class RegisterView( CreateView):
     form_class = AutoRegisterForm
     template_name = 'users/user_form_plain.html'
     success_url = reverse_lazy('login')
