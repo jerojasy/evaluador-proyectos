@@ -5,7 +5,7 @@ from .forms import QuestionForm
 from django.contrib.auth.decorators import login_required
 
 
-@login_required
+#@login_required
 class QuestionListView(ListView):
     model = Question
     template_name = 'questions/question_list.html'
@@ -27,7 +27,7 @@ class QuestionListView(ListView):
     except ImportError as e:
         print(f"Error importando QuestionForm: {e}")
 
-@login_required
+#@login_required
 class QuestionCreateView(CreateView):
     model = Question
     # fields = ['text', 'type', 'options', 'order', 'category']
@@ -36,7 +36,7 @@ class QuestionCreateView(CreateView):
     success_url = reverse_lazy('questions:list')
 
 
-@login_required
+#@login_required
 class QuestionUpdateView(UpdateView):
     model = Question
     # fields = ['text', 'type', 'options', 'order', 'category']
@@ -44,7 +44,7 @@ class QuestionUpdateView(UpdateView):
     template_name = 'questions/question_form.html'
     success_url = reverse_lazy('questions:list')
 
-@login_required
+#@login_required
 class QuestionDeleteView(DeleteView):
     model = Question
     template_name = 'questions/question_confirm_delete.html'

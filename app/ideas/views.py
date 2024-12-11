@@ -1,4 +1,5 @@
 from django.urls import reverse
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseForbidden
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from django.forms import modelformset_factory
@@ -8,10 +9,8 @@ from django.views.generic.edit import FormView
 from django import forms
 from django.urls import reverse_lazy
 from django.db.models import Q
-from django.contrib.auth.decorators import login_required
 
-@login_required
-class IdeaListView(ListView):
+class IdeaListView(LoginRequiredMixin,ListView):
     model = Idea
     template_name = 'ideas/idea_list.html'
     context_object_name = 'ideas'
@@ -28,8 +27,8 @@ class IdeaListView(ListView):
         context = super().get_context_data(**kwargs)
         context['is_admin_or_evaluator'] = self.request.user.role in ['ADMIN', 'EVALUATOR']
         return context
-@login_required
-class IdeaCreateView(CreateView):
+
+class IdeaCreateView(LoginRequiredMixin, CreateView):
     model = Idea
     template_name = 'ideas/idea_form.html'
     fields = ['title']
@@ -87,8 +86,7 @@ class IdeaCreateView(CreateView):
         """Redirige al listado de ideas después de guardar."""
         return reverse('ideas:list')
     
-@login_required
-class IdeaEvaluationForm(forms.ModelForm):
+class IdeaEvaluationForm(LoginRequiredMixin, forms.ModelForm):
     observation = forms.CharField(widget=forms.Textarea, label="Observación", required=True)
 
     class Meta:
@@ -102,8 +100,7 @@ class IdeaEvaluationForm(forms.ModelForm):
             'rows': 2,  # Ajusta la altura del textarea
         })
 
-@login_required
-class IdeaDetailView(DetailView, FormView):
+class IdeaDetailView(LoginRequiredMixin,DetailView, FormView):
     model = Idea
     template_name = 'ideas/idea_detail.html'
     context_object_name = 'idea'
@@ -143,8 +140,7 @@ class IdeaDetailView(DetailView, FormView):
     def get_success_url(self):
         return reverse('ideas:list')
 
-@login_required
-class IdeaUpdateView(UpdateView):
+class IdeaUpdateView(LoginRequiredMixin,UpdateView):
     model = Idea
     template_name = 'ideas/idea_form.html'
     fields = ['title']
@@ -206,8 +202,7 @@ class IdeaUpdateView(UpdateView):
         """Redirige al listado de ideas tras la edición."""
         return reverse('ideas:list')
 
-@login_required    
-class IdeaDeleteView(DeleteView):
+class IdeaDeleteView(LoginRequiredMixin, DeleteView):
     model = Idea
     template_name = 'ideas/idea_confirm_delete.html'
     success_url = reverse_lazy('ideas:list')
