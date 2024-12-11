@@ -2,11 +2,11 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from .models import Question
 from .forms import QuestionForm
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 #@login_required
-class QuestionListView(ListView):
+class QuestionListView(LoginRequiredMixin,ListView):
     model = Question
     template_name = 'questions/question_list.html'
     context_object_name = 'grouped_questions'
@@ -28,7 +28,7 @@ class QuestionListView(ListView):
         print(f"Error importando QuestionForm: {e}")
 
 #@login_required
-class QuestionCreateView(CreateView):
+class QuestionCreateView(LoginRequiredMixin, CreateView):
     model = Question
     # fields = ['text', 'type', 'options', 'order', 'category']
     form_class = QuestionForm
@@ -37,7 +37,7 @@ class QuestionCreateView(CreateView):
 
 
 #@login_required
-class QuestionUpdateView(UpdateView):
+class QuestionUpdateView(LoginRequiredMixin, UpdateView):
     model = Question
     # fields = ['text', 'type', 'options', 'order', 'category']
     form_class = QuestionForm
@@ -45,7 +45,7 @@ class QuestionUpdateView(UpdateView):
     success_url = reverse_lazy('questions:list')
 
 #@login_required
-class QuestionDeleteView(DeleteView):
+class QuestionDeleteView(LoginRequiredMixin, DeleteView):
     model = Question
     template_name = 'questions/question_confirm_delete.html'
     success_url = reverse_lazy('questions:list')
