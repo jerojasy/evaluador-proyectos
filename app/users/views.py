@@ -5,6 +5,7 @@ from django.views.generic import CreateView, ListView, DeleteView, UpdateView
 from django.urls import reverse_lazy
 from .forms import CustomUserCreationForm, CustomAuthenticationForm, AutoRegisterForm, CustomUserUpdateForm
 from .models import CustomUser
+from django.contrib.auth.decorators import login_required
 
 class CustomLoginView(LoginView):
     form_class = CustomAuthenticationForm
@@ -32,6 +33,7 @@ class RegisterView(CreateView):
         form.instance.role = 'CLIENT'  # Asignar rol predeterminado
         return super().form_valid(form)
 
+@login_required
 class UserListView(UserPassesTestMixin, ListView):
     model = CustomUser
     template_name = 'users/user_list.html'
@@ -47,6 +49,7 @@ class UserListView(UserPassesTestMixin, ListView):
             queryset = queryset.filter(role=role)
         return queryset
     
+@login_required
 class UserCreateView(UserPassesTestMixin, CreateView):
     model = CustomUser
     form_class = CustomUserCreationForm
@@ -60,7 +63,7 @@ class UserCreateView(UserPassesTestMixin, CreateView):
         print(form.errors)  # Depurar errores del formulario
         return super().form_invalid(form)
     
-
+@login_required
 class UserUpdateView(UserPassesTestMixin, UpdateView):
     model = CustomUser
     form_class = CustomUserUpdateForm
@@ -75,6 +78,7 @@ class UserUpdateView(UserPassesTestMixin, UpdateView):
         print(form.non_field_errors())
         return super().form_invalid(form)
 
+@login_required
 class UserDeleteView(UserPassesTestMixin, DeleteView):
     model = CustomUser
     template_name = 'users/user_confirm_delete.html'
