@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.timezone import now
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True, verbose_name="Nombre de la Categoría")
@@ -22,10 +23,10 @@ class Question(models.Model):
     options = models.TextField(blank=True, null=True, verbose_name="Opciones (separadas por comas)")
     order = models.PositiveIntegerField(default=0, verbose_name="Orden de la Pregunta")
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="questions", verbose_name="Categoría", null=True, blank=True)
-
+    created_at = models.DateTimeField(default=now, verbose_name="Fecha de Creación")  # Nuevo campo
 
     class Meta:
-        ordering = ['category','order']
+        ordering = ['category', 'order']
 
     def __str__(self):
         return self.text

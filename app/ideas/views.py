@@ -40,11 +40,11 @@ class IdeaCreateView(LoginRequiredMixin, CreateView):
     #     return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        """Incluye las categorías y preguntas para construir el formulario dinámico."""
         context = super().get_context_data(**kwargs)
-        categories = Category.objects.prefetch_related('questions')
-
-        # Procesar las opciones de las preguntas de tipo dropdown
+        
+        # Filtrar categorías y preguntas sin usar `self.object`
+        categories = Category.objects.prefetch_related('questions').distinct()
+        
         for category in categories:
             for question in category.questions.all():
                 if question.type == 'dropdown' and question.options:
@@ -52,6 +52,7 @@ class IdeaCreateView(LoginRequiredMixin, CreateView):
 
         context['categories'] = categories
         return context
+
 
     def form_valid(self, form):
         """Guarda la idea y verifica si todas las preguntas tienen respuestas."""
@@ -108,13 +109,23 @@ class IdeaDetailView(LoginRequiredMixin,DetailView, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['categories'] = Category.objects.prefetch_related('questions')
+        idea_created_at = self.object.created_at
+
+        # Filtrar categorías y preguntas creadas antes o al mismo tiempo que la idea
+        categories = Category.objects.prefetch_related(
+            'questions'
+        ).filter(
+            questions__created_at__lte=idea_created_at
+        ).distinct()
+
         responses = {response.question_id: response.answer for response in self.object.responses.all()}
 
         # Procesar categorías y asociar respuestas
-        for category in context['categories']:
+        for category in categories:
             for question in category.questions.all():
                 question.answer = responses.get(question.id, 'No respondida')
+
+        context['categories'] = categories
 
         if self.request.user.role in ['ADMIN', 'EVALUATOR']:
             context['form'] = self.get_form()
@@ -153,21 +164,26 @@ class IdeaUpdateView(LoginRequiredMixin,UpdateView):
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        """Incluye categorías y respuestas existentes en el contexto."""
         context = super().get_context_data(**kwargs)
-        categories = Category.objects.prefetch_related('questions')
+        idea_created_at = self.object.created_at
+
+        categories = Category.objects.prefetch_related(
+            'questions'
+        ).filter(
+            questions__created_at__lte=idea_created_at
+        ).distinct()
+
         responses = {response.question_id: response.answer for response in self.object.responses.all()}
 
-        # Procesar opciones y respuestas existentes
         for category in categories:
             for question in category.questions.all():
                 if question.type == 'dropdown' and question.options:
                     question.options_list = question.options.split(',')
-                # Prellenar las respuestas en los campos
                 question.current_answer = responses.get(question.id, '')
 
         context['categories'] = categories
         return context
+
 
     def form_valid(self, form):
         """Guarda la idea y actualiza las respuestas."""
