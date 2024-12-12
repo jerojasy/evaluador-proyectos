@@ -5,7 +5,6 @@ from .forms import QuestionForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-#@login_required
 class QuestionListView(LoginRequiredMixin,ListView):
     model = Question
     template_name = 'questions/question_list.html'
@@ -27,7 +26,6 @@ class QuestionListView(LoginRequiredMixin,ListView):
     except ImportError as e:
         print(f"Error importando QuestionForm: {e}")
 
-#@login_required
 class QuestionCreateView(LoginRequiredMixin, CreateView):
     model = Question
     # fields = ['text', 'type', 'options', 'order', 'category']
@@ -36,7 +34,6 @@ class QuestionCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('questions:list')
 
 
-#@login_required
 class QuestionUpdateView(LoginRequiredMixin, UpdateView):
     model = Question
     # fields = ['text', 'type', 'options', 'order', 'category']
@@ -44,7 +41,6 @@ class QuestionUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'questions/question_form.html'
     success_url = reverse_lazy('questions:list')
 
-#@login_required
 class QuestionDeleteView(LoginRequiredMixin, DeleteView):
     model = Question
     template_name = 'questions/question_confirm_delete.html'
