@@ -1,5 +1,6 @@
 from django import forms
 from .models import Question
+from django_summernote.widgets import SummernoteWidget
 
 class QuestionForm(forms.ModelForm):
     class Meta:
@@ -26,3 +27,7 @@ class QuestionForm(forms.ModelForm):
                 'class': 'form-select form-control w-50'
             }),
         }
+
+class AnswerForm(forms.Form):
+    # Agregar campo WYSIWYG solo para respuestas
+    wysiwyg_answer = forms.CharField(widget=SummernoteWidget(), required=False)

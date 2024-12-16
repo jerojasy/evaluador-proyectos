@@ -16,6 +16,7 @@ class Question(models.Model):
         ('text', 'Texto Libre'),
         ('number', 'Número'),
         ('dropdown', 'Opciones Desplegables'),
+        ('wysiwyg', 'Editor de Texto WYSIWYG')
     ]
 
     text = models.CharField(max_length=255, verbose_name="Texto de la Pregunta")

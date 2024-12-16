@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'users',
     'questions',
     'ideas',
+    'django_summernote',
 ]
 
 MIDDLEWARE = [
@@ -133,6 +134,9 @@ STATICFILES_DIRS = [
 ]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
@@ -140,3 +144,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.CustomUser'
 LOGIN_REDIRECT_URL = '/ideas/'
 LOGOUT_REDIRECT_URL = 'login'
+
+SUMMERNOTE_THEME = 'bs5'
