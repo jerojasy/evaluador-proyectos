@@ -9,6 +9,7 @@
             <th>Título</th>
             <th>Estado</th>
             <th>Observación</th>
+            <th>Nota</th>
             <th>Autor</th>
             <th>Empresa</th>
             <th>Última Modificación</th>
@@ -35,6 +36,7 @@
                 </span>
             </td>
             <td>{{ idea.observation|default:"Sin observaciones" }}</td>
+            <td>{{ idea.note|default:"Sin calificación" }}</td>
             <td>{{ idea.user }}</td>
             <td>{{ idea.user.empresa }}</td>
             <td>{{ idea.updated_at|date:"d/m/Y H:i" }}</td>

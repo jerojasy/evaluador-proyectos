@@ -89,10 +89,20 @@ class IdeaCreateView(LoginRequiredMixin, CreateView):
     
 class IdeaEvaluationForm(LoginRequiredMixin, forms.ModelForm):
     observation = forms.CharField(widget=forms.Textarea, label="Observación", required=True)
+    note = forms.DecimalField(
+        max_digits=4, 
+        decimal_places=1, 
+        label="Nota", 
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control w-25', 
+            'placeholder': 'Ej: 7.0'
+        })
+    )
 
     class Meta:
         model = Idea
-        fields = ['observation']
+        fields = ['observation', 'note']
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['observation'].widget.attrs.update({
@@ -140,9 +150,11 @@ class IdeaDetailView(LoginRequiredMixin,DetailView, FormView):
         form = self.get_form()
         if form.is_valid():
             observation = form.cleaned_data['observation']
+            note = form.cleaned_data['note']
             status = request.POST.get('action', 'pending')
             idea.observation = observation
             idea.status = status
+            idea.note = note
             idea.save()
             return self.form_valid(form)
         else:

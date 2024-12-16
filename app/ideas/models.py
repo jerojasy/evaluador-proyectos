@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from questions.models import Question, Category
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 class Idea(models.Model):
     STATUS_CHOICES = [
@@ -14,6 +15,14 @@ class Idea(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="ideas", verbose_name="Usuario")
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='incomplete', verbose_name="Estado")
     observation = models.TextField(null=True, blank=True, verbose_name="Observación")
+    note = models.DecimalField(
+    max_digits=4,  # Hasta 99.99
+    decimal_places=1,
+    null=True,
+    blank=True,
+    verbose_name="Nota",
+    validators=[MinValueValidator(1.0), MaxValueValidator(7.0)]  # Rango de notas válido
+    )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Creación")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Última Modificación")
 
